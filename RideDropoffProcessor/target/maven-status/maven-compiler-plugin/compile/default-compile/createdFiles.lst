@@ -1,0 +1,4 @@
+org/taxi/nyc/TaxiStatusUpdatePayload.class
+org/taxi/nyc/RideAveragePayload.class
+org/taxi/nyc/Application.class
+org/taxi/nyc/Application$Accumulator.class

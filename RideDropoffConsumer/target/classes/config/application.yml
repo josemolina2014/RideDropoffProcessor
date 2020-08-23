@@ -1,0 +1,27 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: taxiNycV1StatsDropoffAvgConsumer
+      bindings:
+        taxiNycV1StatsDropoffAvgConsumer-in-0:
+          destination: test/taxi/nyc/v1/stats/dropoff/avg
+solace:
+  java:
+    host: 'tcps://mrg3jw4qy92zv.messaging.solace.cloud:55443'
+    msgVpn: demo
+    clientUsername: solace-cloud-client
+    clientPassword: t1n9re9mslbe7ja4cdtus81hvg
+logging:
+  level:
+    root: info
+    org:
+      springframework: info
+server:
+  port: 8888
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

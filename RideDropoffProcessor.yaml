@@ -1,0 +1,226 @@
+components:
+  schemas:
+    RideAveragePayload:
+      default: {}
+      $schema: 'http://json-schema.org/draft-07/schema'
+      description: The root schema comprises the entire JSON document.
+      additionalProperties: true
+      type: object
+      title: The root schema
+      required:
+        - timestamp
+        - avg_meter_reading
+        - avg_passenger_count
+        - window_duration_sec
+        - window_ride_count
+      properties:
+        avg_meter_reading:
+          default: 0
+          examples:
+            - 21.615217
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The avg_meter_reading schema
+          $id: '#/properties/avg_meter_reading'
+        window_duration_sec:
+          default: 0
+          examples:
+            - 300
+          description: An explanation about the purpose of this instance.
+          type: integer
+          title: The window_duration_sec schema
+          $id: '#/properties/window_duration_sec'
+        avg_passenger_count:
+          default: 0
+          examples:
+            - 1.5
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The avg_passenger_count schema
+          $id: '#/properties/avg_passenger_count'
+        window_ride_count:
+          default: 0
+          examples:
+            - 5
+          description: An explanation about the purpose of this instance.
+          type: integer
+          title: The window_ride_count schema
+          $id: '#/properties/window_ride_count'
+        timestamp:
+          default: ''
+          examples:
+            - '2020-06-04T20:09:59.99832-04:00'
+          description: An explanation about the purpose of this instance.
+          type: string
+          title: The timestamp schema
+          $id: '#/properties/timestamp'
+      $id: 'http://example.com/example.json'
+    TaxiStatusUpdatePayload:
+      default: {}
+      $schema: 'http://json-schema.org/draft-07/schema'
+      examples:
+        - ride_id: 545496 c5 - a334 - 4344 - 9662 - efde68c0b98a
+          latitude: 40.75473
+          meter_increment: 0.02278058
+          passenger_count: 1
+          point_idx: 107
+          longitude: -73.98385
+          timestamp: '2020 - 06 - 03 T16: 51: 47.29612 - 04:00'
+          meter_reading: 2.4375222
+          ride_status: enroute
+      description: The root schema comprises the entire JSON document.
+      additionalProperties: true
+      type: object
+      title: The root schema
+      required:
+        - ride_id
+        - point_idx
+        - latitude
+        - longitude
+        - timestamp
+        - meter_reading
+        - meter_increment
+        - ride_status
+        - passenger_count
+      properties:
+        ride_id:
+          default: ''
+          examples:
+            - 545496 c5 - a334 - 4344 - 9662 - efde68c0b98a
+          format: uuid
+          description: An explanation about the purpose of this instance.
+          type: string
+          title: The ride_id schema
+          $id: '#/properties/ride_id'
+        latitude:
+          default: 0
+          examples:
+            - 40.75473
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The latitude schema
+          $id: '#/properties/latitude'
+        meter_increment:
+          default: 0
+          examples:
+            - 0.02278058
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The meter_increment schema
+          $id: '#/properties/meter_increment'
+        passenger_count:
+          default: 0
+          examples:
+            - 1
+          description: An explanation about the purpose of this instance.
+          type: integer
+          title: The passenger_count schema
+          $id: '#/properties/passenger_count'
+        point_idx:
+          default: 0
+          examples:
+            - 107
+          description: An explanation about the purpose of this instance.
+          type: integer
+          title: The point_idx schema
+          $id: '#/properties/point_idx'
+        longitude:
+          default: 0
+          examples:
+            - -73.98385
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The longitude schema
+          $id: '#/properties/longitude'
+        timestamp:
+          default: ''
+          examples:
+            - '2020-06-03T16:51:47.29612-04:00'
+          description: An explanation about the purpose of this instance.
+          type: string
+          title: The timestamp schema
+          $id: '#/properties/timestamp'
+        meter_reading:
+          default: 0
+          examples:
+            - 2.4375222
+          description: An explanation about the purpose of this instance.
+          type: number
+          title: The meter_reading schema
+          $id: '#/properties/meter_reading'
+        ride_status:
+          default: ''
+          examples:
+            - enroute
+          description: An explanation about the purpose of this instance.
+          type: string
+          title: The ride_status schema
+          $id: '#/properties/ride_status'
+      $id: 'http://example.com/example.json'
+  messages:
+    RideAverageUpdate:
+      payload:
+        $ref: '#/components/schemas/RideAveragePayload'
+      schemaFormat: application/vnd.aai.asyncapi+json;version=2.0.0
+      contentType: application/json
+    TaxiStatusUpdate:
+      payload:
+        $ref: '#/components/schemas/TaxiStatusUpdatePayload'
+      schemaFormat: 'application/vnd.aai.asyncapi+json;version=2.0.0'
+      contentType: application/json
+  parameters:
+    rideStatus:
+        description: Ride Status
+        schema: 
+          type: string
+    passengerCount:
+        description: Ride Status
+        schema:
+          type: number
+          examples:
+            - enroute
+    rideId:
+        description: Ride id
+        schema:
+          type: number
+    longitude:
+        description: Longitude
+        schema:
+          type: number
+    latitude:
+        description: Latitude
+        schema:
+          type: number     
+        
+          
+channels:
+  'taxi/nyc/v1/${ride_status}/${passenger_count}/${ride_id}/${longitude}/${latitude}':
+    parameters:
+      ride_status:
+        $ref: '#/components/parameters/rideStatus'
+      passenger_count:
+         $ref: '#/components/parameters/passengerCount'
+      ride_id:
+         $ref: '#/components/parameters/rideId'
+      longitude:
+         $ref: '#/components/parameters/longitude'
+      latitude:
+        $ref: '#/components/parameters/latitude'
+    subscribe:
+      x-scs-function-name: processDropoffRideAverages
+      x-scs-destination: taxiUpdateQueue
+      message:
+        $ref: '#/components/messages/TaxiStatusUpdate'
+  taxi/nyc/v1/stats/dropoff/avg:
+    publish:
+      x-scs-function-name: processDropoffRideAverages
+      message:
+        $ref: '#/components/messages/RideAverageUpdate'
+asyncapi: 2.0.0
+info:
+  description: description 
+  x-application-class: unspecified
+  title: RideDropoffProcessor
+  x-view: provider
+  version: 0.0.1
+
